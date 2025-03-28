@@ -3,7 +3,6 @@ import { connect } from "cloudflare:sockets";
 
 let password = '';
 let proxyIP = '';
-//let sub = '';
 let subConverter = atob('U1VCQVBJLkNNTGl1c3Nzcy5uZXQ=');
 let subConfig = atob('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FDTDRTU1IvQUNMNFNTUi9tYXN0ZXIvQ2xhc2gvY29uZmlnL0FDTDRTU1JfT25saW5lX01pbmlfTXVsdGlNb2RlLmluaQ==');
 let subProtocol = 'https';
@@ -12,7 +11,7 @@ let socks5Address = '';
 let parsedSocks5Address = {};
 let enableSocks = false;
 
-const expire = 4102329600;//2099-12-31
+const expire = 4102329600;
 let proxyIPs;
 let socks5s;
 let go2Socks5s = [
@@ -25,7 +24,7 @@ let addresses = [];
 let addressesapi = [];
 let addressescsv = [];
 let DLS = 8;
-let remarkIndex = 1;//CSV备注所在列偏移量
+let remarkIndex = 1;
 let FileName = 'epeius';
 let BotToken = '';
 let ChatID = '';
@@ -54,10 +53,9 @@ export default {
 				});
 			}
 			sha224Password = env.SHA224 || env.SHA224PASS || sha224(password);
-			//console.log(sha224Password);
 
 			const currentDate = new Date();
-			currentDate.setHours(0, 0, 0, 0); // 设置时间为当天
+			currentDate.setHours(0, 0, 0, 0); 
 			const timestamp = Math.ceil(currentDate.getTime() / 1000);
 			const fakeUserIDMD5 = await MD5MD5(`${password}${timestamp}`);
 			const fakeUserID = [
@@ -87,7 +85,6 @@ export default {
 					RproxyIP = env.RPROXYIP || 'false';
 					enableSocks = true;
 				} catch (err) {
-					/** @type {Error} */
 					let e = err;
 					console.log(e.toString());
 					RproxyIP = env.RPROXYIP || !proxyIP ? 'true' : 'false';
@@ -152,7 +149,6 @@ export default {
 						await sendMessage(`#获取订阅 ${FileName}`, request.headers.get('CF-Connecting-IP'), `UA: ${UA}</tg-spoiler>\n域名: ${url.hostname}\n<tg-spoiler>入口: ${url.pathname + url.search}</tg-spoiler>`);
 						const 特洛伊Config = await get特洛伊Config(password, request.headers.get('Host'), sub, UA, RproxyIP, url, fakeUserID, fakeHostName, env);
 						const now = Date.now();
-						//const timestamp = Math.floor(now / 1000);
 						const today = new Date(now);
 						today.setHours(0, 0, 0, 0);
 						const UD = Math.floor(((now - today.getTime()) / 86400000) * 24 * 1099511627776 / 2);
@@ -204,7 +200,6 @@ export default {
 						parsedSocks5Address = socks5AddressParser(socks5Address);
 						enableSocks = true;
 					} catch (err) {
-						/** @type {Error} */
 						let e = err;
 						console.log(e.toString());
 						enableSocks = false;
@@ -339,9 +334,7 @@ async function parse特洛伊Header(buffer) {
 	}
 
 	const atype = view.getUint8(1);
-	// 0x01: IPv4 address
-	// 0x03: Domain name
-	// 0x04: IPv6 address
+
 	let addressLength = 0;
 	let addressIndex = 2;
 	let address = "";
@@ -407,14 +400,12 @@ async function handleTCPOutBound(remoteSocket, addressRemote, portRemote, rawCli
 	}
 	async function connectAndWrite(address, port, socks = false) {
 		log(`connected to ${address}:${port}`);
-		//if (/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(address)) address = `${atob('d3d3Lg==')}${address}${atob('LmlwLjA5MDIyNy54eXo=')}`;
 		const tcpSocket = socks ? await socks5Connect(addressType, address, port, log)
 			: connect({
 				hostname: address,
 				port
 			});
 		remoteSocket.value = tcpSocket;
-		//log(`connected to ${address}:${port}`);
 		const writer = tcpSocket.writable.getWriter();
 		await writer.write(rawClientData);
 		writer.releaseLock();
@@ -496,11 +487,7 @@ async function remoteSocketToWS(remoteSocket, webSocket, retry, log) {
 	await remoteSocket.readable.pipeTo(
 		new WritableStream({
 			start() { },
-			/**
-			 *
-			 * @param {Uint8Array} chunk
-			 * @param {*} controller
-			 */
+
 			async write(chunk, controller) {
 				hasIncomingData = true;
 				if (webSocket.readyState !== WS_READY_STATE_OPEN) {
@@ -529,12 +516,7 @@ async function remoteSocketToWS(remoteSocket, webSocket, retry, log) {
 		retry();
 	}
 }
-/*
-function isValidSHA224(hash) {
-	const sha224Regex = /^[0-9a-f]{56}$/i;
-	return sha224Regex.test(hash);
-}
-*/
+
 function base64ToArrayBuffer(base64Str) {
 	if (!base64Str) {
 		return { earlyData: undefined, error: null };
